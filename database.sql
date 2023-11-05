@@ -1,14 +1,14 @@
 CREATE DATABASE shopapp;
 USE shopapp;
-    --Khách hàng muốn mua hàng =>> phải đăng ký tài khoản =>> bảng users
+#     -Khách hàng muốn mua hàng =>> phải đăng ký tài khoản =>> bảng users
     CREATE TABLE users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         fullname VARCHAR(100) DEFAULT '',
         phone_number VARCHAR(10) NOT NULL,
         address VARCHAR(200) DEFAULT '',
         password VARCHAR(100) NOT NULL DEFAULT '',
-        created_at TIMESTAMP,
-        updated_at TIMESTAMP,
+        created_at DATETIME,
+        updated_at DATETIME,
         is_active TINYINT(1) DEFAULT 1,
         date_of_birth DATE,
         facebook_account_id INT DEFAULT 0,
@@ -19,9 +19,9 @@ USE shopapp;
     CREATE TABLE roles (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(20) NOT NULL
-    )
+    );
 
-    ALTER TABLE users ADD FOREIGN KEY (role_id) REFERENCES roles (id)
+    ALTER TABLE users ADD FOREIGN KEY (role_id) REFERENCES roles (id);
 
     CREATE TABLE tokens (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -49,7 +49,7 @@ USE shopapp;
     CREATE TABLE categories
     (
         id   INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(100) NOT NULL DEFAULT '' COMMENT 'Tên danh mục, vd: đồ điện tử ....',
+        name VARCHAR(100) NOT NULL DEFAULT '' COMMENT 'Tên danh mục, vd: đồ điện tử ....'
     );
 
     -- Bản chứa sản phẩm (Product): "laptop macbook air 15 inch 2023", "iphone 15"....
@@ -66,6 +66,15 @@ USE shopapp;
         FOREIGN KEY (category_id) REFERENCES categories(id)
     );
 
+    CREATE TABLE product_images(
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        product_id INT,
+        FOREIGN KEY (product_id) REFERENCES products(id),
+        CONSTRAINT fk_product_images_product_id FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+        image_url VARCHAR(300)
+    );
+    /*ON DELETE CASCADE : tức là khi product bị xóa thì product_image cũng sẽ bị xóa tương ứng*/
+
     -- Đặt hàng - orders
     CREATE TABLE orders
     (
@@ -80,7 +89,7 @@ USE shopapp;
         order_date   DATETIME DEFAULT CURRENT_TIMESTAMP,
         status       VARCHAR(20),
         total_money FLOAT CHECK (total_money >= 0)
-    )
+    );
     ALTER TABLE orders ADD COLUMN shipping_method VARCHAR(100);
     ALTER TABLE orders ADD COLUMN shipping_address VARCHAR(200);
     ALTER TABLE orders ADD COLUMN shipping_date DATE;
@@ -104,5 +113,5 @@ USE shopapp;
         price FLOAT CHECK (price >= 0),
         nuber_of_product INT CHECK (nuber_of_product > 0),
         total_money FLOAT CHECK (total_money >= 0),
-        color VARCHAR(20) DEFAULT '',
+        color VARCHAR(20) DEFAULT ''
     )

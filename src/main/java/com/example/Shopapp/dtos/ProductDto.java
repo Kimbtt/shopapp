@@ -1,4 +1,4 @@
-package com.example.Shopapp.dto;
+package com.example.Shopapp.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Data
 public class ProductDto {
@@ -23,7 +25,7 @@ public class ProductDto {
     private String description;
 
     @JsonProperty("category_id")
-    private String categoryId;
+    private Long categoryId;
 
-    private MultipartFile file;
+    private List<MultipartFile> files;
 }
