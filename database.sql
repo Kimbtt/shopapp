@@ -95,7 +95,6 @@ USE shopapp;
     ALTER TABLE orders ADD COLUMN shipping_date DATE;
     ALTER TABLE orders ADD COLUMN tracking_number VARCHAR(100);
     ALTER TABLE orders ADD COLUMN payment_method VARCHAR(100);
-    ALTER TABLE orders ADD COLUMN payment_method VARCHAR(100);
     -- Xóa 1 đn hàng -> xóa mêm -> thêm trường active
     ALTER TABLE orders ADD COLUMN active TINYINT(1) ;
     -- Trạng thái đơn hàng chỉ được nhận "một số giá trị cụ thể"

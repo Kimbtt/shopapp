@@ -1,17 +1,16 @@
 package com.example.Shopapp.services;
 
-import com.example.Shopapp.dtos.CategoryDto;
-import com.example.Shopapp.models.Category;
+import com.example.Shopapp.models.dtos.CategoryDto;
+import com.example.Shopapp.models.entity.Category;
 import com.example.Shopapp.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor // Sẽ tạo constructor cho nhưững thèng có final
-public class CategoryServiceImpl implements ICategoryService {
+public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
 

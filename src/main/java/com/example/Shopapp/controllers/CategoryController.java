@@ -1,19 +1,15 @@
 package com.example.Shopapp.controllers;
 
-import com.example.Shopapp.dtos.CategoryDto;
-import com.example.Shopapp.models.Category;
+import com.example.Shopapp.models.dtos.CategoryDto;
+import com.example.Shopapp.models.entity.Category;
 import com.example.Shopapp.services.CategoryServiceImpl;
-import com.example.Shopapp.services.ICategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 

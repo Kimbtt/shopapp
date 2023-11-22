@@ -1,19 +1,18 @@
 package com.example.Shopapp.services;
 
-import com.example.Shopapp.dtos.UserDto;
+import com.example.Shopapp.models.dtos.UserDto;
 import com.example.Shopapp.exceptions.DataNotFoundException;
-import com.example.Shopapp.models.Role;
-import com.example.Shopapp.models.User;
+import com.example.Shopapp.models.entity.Role;
+import com.example.Shopapp.models.entity.User;
 import com.example.Shopapp.repositories.RoleRepository;
 import com.example.Shopapp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements IUserService{
+public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     @Override

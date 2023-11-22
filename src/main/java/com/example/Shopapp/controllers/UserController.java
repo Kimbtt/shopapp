@@ -1,7 +1,8 @@
 package com.example.Shopapp.controllers;
 
-import com.example.Shopapp.dtos.*;
-import com.example.Shopapp.services.IUserService;
+import com.example.Shopapp.models.dtos.UserDto;
+import com.example.Shopapp.models.dtos.UserLoginDto;
+import com.example.Shopapp.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequestMapping("${api.prefix}/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final IUserService userService;
+    private final UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<?> createUser(
