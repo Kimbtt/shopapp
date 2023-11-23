@@ -1,7 +1,9 @@
 package com.example.Shopapp.controllers;
 
+import com.example.Shopapp.exceptions.DataNotFoundException;
 import com.example.Shopapp.models.dtos.UserDto;
 import com.example.Shopapp.models.dtos.UserLoginDto;
+import com.example.Shopapp.models.entity.User;
 import com.example.Shopapp.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -50,9 +52,9 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @Valid @RequestBody UserLoginDto userLoginDto
-    ) {
+    ) throws DataNotFoundException {
         //Kiểm tra thông tin đăng nhập và sinh token
-        String token = userService.login(userLoginDto.getPhoneNumber(), userLoginDto.getPassword());
+        User token = userService.login(userLoginDto.getPhoneNumber(), userLoginDto.getPassword());
         // Trả về token trong response
 
         return ResponseEntity.ok(token);

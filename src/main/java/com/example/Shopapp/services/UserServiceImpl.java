@@ -8,13 +8,18 @@ import com.example.Shopapp.repositories.RoleRepository;
 import com.example.Shopapp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.swing.text.html.Option;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public User createUser(UserDto userDto) throws DataNotFoundException {
         String phoneNumber = userDto.getPhoneNumber();
@@ -35,20 +40,25 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.findById(userDto.getRoleId())
                 .orElseThrow(()-> new DataNotFoundException("Role not found"));
 
-        newUser.setRoleId(role);
+        newUser.setRole(role);
 
         // Kiểm tra nếu có accountId => không yêu cầu password
         if (userDto.getGoogleAcountId() == 0 & userDto.getFacebookAcountId() == 0){
             String password = userDto.getPassword();
+            String encodedPassword = passwordEncoder.encode(password);
+            newUser.setPassword(encodedPassword);
         }
 
         return userRepository.save(newUser);
     }
 
     @Override
-    public String login(String phoneNumber, String password) {
+    public User login(String phoneNumber, String password) throws DataNotFoundException {
+        Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
+        if (optionalUser.isEmpty()){
+            throw new DataNotFoundException("Invalid phonenumber / password");
+        }
 
-
-        return null;
+        return optionalUser.get(); // muốn trả về jwt token?
     }
 }
