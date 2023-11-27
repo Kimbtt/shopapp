@@ -41,9 +41,7 @@ public class UserController {
             if (!userDto.getPassword().equals(userDto.getRetypePassword())) {
                 return ResponseEntity.badRequest().body("Password does not match");
             }
-            userService.createUser(userDto);
-
-            return ResponseEntity.ok("Register successfully");
+            return ResponseEntity.ok(userService.createUser(userDto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage() + "123");
         }
@@ -52,11 +50,15 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @Valid @RequestBody UserLoginDto userLoginDto
-    ) throws DataNotFoundException {
+    ) {
         //Kiểm tra thông tin đăng nhập và sinh token
-        User token = userService.login(userLoginDto.getPhoneNumber(), userLoginDto.getPassword());
-        // Trả về token trong response
+        try {
+            String token = userService.login(userLoginDto.getPhoneNumber(), userLoginDto.getPassword());
+            // Trả về token trong response
+            return ResponseEntity.ok(token);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
-        return ResponseEntity.ok(token);
     }
 }

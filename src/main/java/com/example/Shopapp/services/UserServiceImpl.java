@@ -1,5 +1,6 @@
 package com.example.Shopapp.services;
 
+import com.example.Shopapp.components.JwtTokenUtils;
 import com.example.Shopapp.models.dtos.UserDto;
 import com.example.Shopapp.exceptions.DataNotFoundException;
 import com.example.Shopapp.models.entity.Role;
@@ -7,7 +8,11 @@ import com.example.Shopapp.models.entity.User;
 import com.example.Shopapp.repositories.RoleRepository;
 import com.example.Shopapp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +25,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenUtils jwtTokenUtils;
+    private final AuthenticationManager authenticationManager;
     @Override
     public User createUser(UserDto userDto) throws DataNotFoundException {
         String phoneNumber = userDto.getPhoneNumber();
@@ -53,12 +60,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(String phoneNumber, String password) throws DataNotFoundException {
+    public String login(String phoneNumber, String password) throws Exception {
         Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
         if (optionalUser.isEmpty()){
-            throw new DataNotFoundException("Invalid phonenumber / password");
+            throw new DataNotFoundException("Invalid phone number / password");
         }
+        //return optionalUser.get(); // muốn trả về jwt token?
+        User existingUser = optionalUser.get();
 
-        return optionalUser.get(); // muốn trả về jwt token?
+        // Check password
+        if(existingUser.getFacebookAccountId() == 0 && existingUser.getGoogleAccountId() == 0){
+            if (!passwordEncoder.matches(password, existingUser.getPassword())){
+                throw new BadCredentialsException("Wrong phone number / password");
+            }
+        }
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                phoneNumber, password, existingUser.getAuthorities()
+        );
+        // Authenticate with Java Spring security
+        authenticationManager.authenticate(authenticationToken);
+        return jwtTokenUtils.generateToken(existingUser);
     }
 }
