@@ -1,6 +1,7 @@
 package com.example.Shopapp.components;
 
 import com.example.Shopapp.exceptions.InvalidParamException;
+import com.example.Shopapp.models.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,7 +25,7 @@ public class JwtTokenUtils {
     private int expiration; //save to an environment variable
     @Value("${jwt.secretKey}")
     private String secretKey;
-    public String generateToken(com.example.Shopapp.models.entity.User user) throws Exception{
+    public String generateToken(User user) throws Exception{
         //properties => claims
         Map<String, Object> claims = new HashMap<>();
         //this.generateSecretKey();
@@ -40,6 +41,7 @@ public class JwtTokenUtils {
         }catch (Exception e) {
             //you can "inject" Logger, instead System.out.println
             throw new InvalidParamException("Cannot create jwt token, error: "+e.getMessage());
+            //return null;
         }
     }
     private Key getSignInKey() {
@@ -61,17 +63,21 @@ public class JwtTokenUtils {
                 .parseClaimsJws(token)
                 .getBody();
     }
-
-    public  <T> T extractClaim(String token, Function<Claims, T> claimsResolver){
+    public  <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = this.extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-
-    // Check expiration
-    public boolean isTokenExpired (String token) {
+    //check expiration
+    public boolean isTokenExpired(String token) {
         Date expirationDate = this.extractClaim(token, Claims::getExpiration);
         return expirationDate.before(new Date());
     }
-
-
+    public String extractPhoneNumber(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+    public boolean validateToken(String token, UserDetails userDetails) {
+        String phoneNumber = extractPhoneNumber(token);
+        return (phoneNumber.equals(userDetails.getUsername()))
+                && !isTokenExpired(token);
+    }
 }

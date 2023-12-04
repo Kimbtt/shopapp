@@ -1,10 +1,13 @@
 package com.example.Shopapp.controllers;
 
+import com.example.Shopapp.components.LocalizationUtils;
 import com.example.Shopapp.exceptions.DataNotFoundException;
 import com.example.Shopapp.models.dtos.UserDto;
 import com.example.Shopapp.models.dtos.UserLoginDto;
 import com.example.Shopapp.models.entity.User;
+import com.example.Shopapp.models.responses.LoginResponse;
 import com.example.Shopapp.services.UserService;
+import com.example.Shopapp.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final LocalizationUtils localizationUtils;
 
     @PostMapping("/register")
     public ResponseEntity<?> createUser(
@@ -51,13 +55,24 @@ public class UserController {
     public ResponseEntity<?> login(
             @Valid @RequestBody UserLoginDto userLoginDto
     ) {
-        //Kiểm tra thông tin đăng nhập và sinh token
+        // Kiểm tra thông tin đăng nhập và sinh token
         try {
-            String token = userService.login(userLoginDto.getPhoneNumber(), userLoginDto.getPassword());
+            String token = userService.login(
+                    userLoginDto.getPhoneNumber(),
+                    userLoginDto.getPassword(),
+                    userLoginDto.getRoleId()
+            );
             // Trả về token trong response
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok(LoginResponse.builder()
+                    .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_SUCCESSFULLY))
+                    .token(token)
+                    .build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(
+                    LoginResponse.builder()
+                            .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_FAILED, e.getMessage()))
+                            .build()
+            );
         }
 
     }

@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Data
 public class UserDto {
-    @JsonProperty("fullname")
+    @JsonProperty("full_name")
     private String fullName;
 
     @JsonProperty("phone_number")
@@ -28,11 +28,11 @@ public class UserDto {
     @JsonProperty("date_of_birth")
     private Date dateOfBirth;
 
-    @JsonProperty("facebook_acount_id")
-    private int facebookAcountId;
+    @JsonProperty("facebook_account_id")
+    private int facebookAccountId;
 
-    @JsonProperty("google_acount_id")
-    private int googleAcountId;
+    @JsonProperty("google_account_id")
+    private int googleAccountId;
 
     @NotNull(message = "Role ID is required")
     @JsonProperty("role_id")

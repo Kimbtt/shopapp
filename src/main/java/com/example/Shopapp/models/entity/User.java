@@ -38,7 +38,7 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
 
     @Column(name = "is_active")
-    private Boolean active;
+    private boolean active;
 
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
@@ -57,7 +57,8 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority("ROLE_" + getRole().getName()));
+        authorityList.add(new SimpleGrantedAuthority("ROLE_" + getRole().getName().toUpperCase()));
+//        authorityList.add(new SimpleGrantedAuthority("ADMIN"));
         return authorityList;
     }
 
@@ -81,7 +82,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
